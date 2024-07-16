@@ -1,4 +1,5 @@
 import datetime
+import time
 import os.path
 
 from google.auth.transport.requests import Request
@@ -35,13 +36,13 @@ def get_next():
         service = build("calendar", "v3", credentials=creds)
 
         # Call the Calendar API
-        now = datetime.datetime.utcnow().isoformat() + "Z"  # 'Z' indicates UTC time
+        now = datetime.datetime.utcnow().isoformat().split(".")[0] + "Z"  # 'Z' indicates UTC time
         events_result = (
             service.events()
             .list(
                 calendarId="primary",
                 timeMin=now,
-                maxResults=1,
+                maxResults=10,
                 singleEvents=True,
                 orderBy="startTime",
             )
@@ -54,9 +55,10 @@ def get_next():
             return
 
         # return event
-        event = events[0]
-        start = event["start"].get("dateTime", event["start"].get("date"))
-        return start, event["summary"]
+        for event in events:
+            start = event["start"].get("dateTime", event["start"].get("date"))
+            if start and datetime.datetime.fromisoformat(start).timestamp() > time.time():
+                return start, event["summary"]
 
     except HttpError as error:
         print(f"An error occurred: {error}")
