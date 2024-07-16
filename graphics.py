@@ -60,7 +60,8 @@ def alert(text, time):
     curr_background = 0
 
     # Initialize rotators
-    rotators = [Rotator(f"motivational_images/{random.randint(0, 5)}.png", screen) for _ in range(10)]
+    rotators = [Rotator(f"motivational_images/{random.randint(0, 4)}.png", screen) for _ in range(10)]
+    rotators += [Rotator(f"motivational_images/nyan.png", screen) for _ in range(10)]
 
     while True:
         # flashing background
