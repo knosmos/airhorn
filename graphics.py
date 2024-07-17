@@ -9,6 +9,7 @@ clock = pygame.time.Clock()
 
 font = pygame.font.Font("SpaceGrotesk-Regular.ttf", 50)
 time_font = pygame.font.Font("SpaceGrotesk-Regular.ttf", 30)
+instruct_font = pygame.font.Font("SpaceGrotesk-Regular.ttf", 15)
 
 class Rotator:
     def __init__(self, filename, screen):
@@ -77,11 +78,21 @@ def alert(text, time):
         # text
         text_render = font.render(text, True, (255, 255, 255))
         text_rect = text_render.get_rect(center=(screen.get_width() / 2, screen.get_height() / 2))
+
+        background = pygame.Surface((text_rect.width + 40, text_rect.height + 120))
+        background.fill((0, 0, 0))
+        background.set_alpha(128)
+        screen.blit(background, (text_rect.x - 20, text_rect.y - 20))
+
         screen.blit(text_render, text_rect)
 
         time_render = time_font.render(time, True, (255, 255, 255))
-        time_rect = time_render.get_rect(center=(screen.get_width() / 2, screen.get_height() / 2 + 100))
+        time_rect = time_render.get_rect(center=(screen.get_width() / 2, screen.get_height() / 2 + 70))
         screen.blit(time_render, time_rect)
+
+        instruct_render = instruct_font.render("[esc] dismiss  |  [space] snooze", True, (255, 255, 255))
+        instruct_rect = instruct_render.get_rect(center=(screen.get_width() / 2, screen.get_height() - 50))
+        screen.blit(instruct_render, instruct_rect)
 
         pygame.display.flip()
         clock.tick(20)
@@ -89,7 +100,10 @@ def alert(text, time):
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     pygame.display.quit()
-                    return
+                    return "dismiss"
+                elif event.key == K_SPACE:
+                    pygame.display.quit()
+                    return "snooze"
 
 if __name__ == "__main__":
     while True:
